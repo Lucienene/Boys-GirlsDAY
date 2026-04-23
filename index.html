@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT-MISSION</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f4ff;
+    --card: #ffffff;
+    --blue: #4361ee;
+    --blue-light: #e8ecff;
+    --green: #2d9e6b;
+    --green-light: #e6f7f0;
+    --red: #e0334c;
+    --red-light: #fdeaed;
+    --yellow: #f4a300;
+    --yellow-light: #fff8e6;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: #dde3f0;
+    --radius: 16px;
+    --shadow: 0 4px 24px rgba(67,97,238,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    min-height: 100vh;
+    padding: 32px 16px 64px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+    animation: fadeDown 0.5s ease both;
+  }
+  .header-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--blue); color: #fff;
+    font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+    padding: 6px 16px; border-radius: 99px; margin-bottom: 12px;
+  }
+  .header h1 {
+    font-size: 38px; font-weight: 900; color: var(--text); line-height: 1.1;
+    letter-spacing: -1px; margin-bottom: 8px;
+  }
+  .header h1 span { color: var(--blue); }
+  .header p { color: var(--muted); font-size: 15px; font-weight: 600; }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px 32px;
+    margin: 0 auto 20px;
+    max-width: 680px;
+    border: 2px solid transparent;
+    animation: fadeUp 0.5s ease both;
+  }
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.10s; }
+  .card:nth-child(3) { animation-delay: 0.15s; }
+  .card:nth-child(4) { animation-delay: 0.20s; }
+  .card.bonus { border-color: var(--yellow); background: var(--yellow-light); }
+
+  .card-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .mission-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .m1 .mission-icon { background: #e8ecff; }
+  .m2 .mission-icon { background: #e6f7f0; }
+  .m3 .mission-icon { background: #fff0e8; }
+  .bonus .mission-icon { background: #fff8e6; }
+
+  .mission-label {
+    font-size: 11px; font-weight: 800; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 1px;
+  }
+  .card-header h2 { font-size: 17px; font-weight: 800; color: var(--text); }
+
+  .card-body { color: var(--muted); font-weight: 600; line-height: 1.6; margin-bottom: 14px; }
+  .task-prompt { font-weight: 700; color: var(--text); margin-bottom: 12px; }
+
+  .input-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .input-label { font-weight: 700; color: var(--text); white-space: nowrap; }
+
+  input.field {
+    border: 2px solid var(--border); border-radius: 10px; outline: none;
+    font-size: 15px; font-family: inherit; font-weight: 700;
+    padding: 8px 14px; background: var(--bg); color: var(--text);
+    transition: border-color 0.2s, background 0.2s;
+    width: 100px;
+  }
+  input.field:focus { border-color: var(--blue); background: #fff; }
+  input.field.correct { border-color: var(--green); background: var(--green-light); color: var(--green); }
+  input.field.wrong   { border-color: var(--red);   background: var(--red-light);   color: var(--red); }
+  input.field.wide { width: 280px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--blue); color: #fff;
+    font-family: inherit; font-size: 14px; font-weight: 800;
+    padding: 9px 20px; border: none; border-radius: 10px;
+    cursor: pointer; transition: background 0.15s, transform 0.1s;
+  }
+  .btn:hover { background: #3451d1; }
+  .btn:active { transform: scale(0.97); }
+  .btn.yellow { background: var(--yellow); }
+  .btn.yellow:hover { background: #d98f00; }
+
+  .feedback {
+    margin-top: 10px; min-height: 20px; font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .feedback.correct { color: var(--green); }
+  .feedback.wrong   { color: var(--red); }
+
+  .options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .opt-label {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; border-radius: 10px; border: 2px solid var(--border);
+    cursor: pointer; user-select: none; font-weight: 700; color: var(--text);
+    transition: border-color 0.15s, background 0.15s;
+    background: var(--bg);
+  }
+  .opt-label:hover { border-color: var(--blue); background: var(--blue-light); }
+  .opt-label.selected { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+  .opt-label.correct  { border-color: var(--green); background: var(--green-light); color: var(--green); }
+  .opt-label.wrong    { border-color: var(--red);   background: var(--red-light);   color: var(--red); }
+
+  .opt-box {
+    width: 18px; height: 18px; border: 2px solid currentColor;
+    border-radius: 5px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 11px; font-weight: 900;
+  }
+  .opt-label.selected .opt-box::after { content: '✓'; }
+  .opt-label.correct  .opt-box::after { content: '✓'; }
+  .opt-label.wrong    .opt-box::after { content: '✗'; }
+
+  /* Mission 3 – line connector */
+  .connect-arena {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    gap: 0;
+    margin-bottom: 14px;
+    align-items: start;
+  }
+  .connect-col-header {
+    font-size: 11px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--muted);
+    margin-bottom: 10px; padding: 0 4px;
+  }
+  .connect-col { display: flex; flex-direction: column; gap: 10px; }
+  .connect-mid {
+    /* placeholder column so grid keeps the gap */
+  }
+
+  .prog-chip {
+    display: flex; align-items: center; gap: 8px;
+    padding: 11px 14px; border-radius: 10px; border: 2px solid var(--border);
+    background: var(--bg); font-weight: 800; cursor: pointer;
+    transition: all 0.15s; user-select: none; min-height: 46px;
+  }
+  .prog-chip:hover   { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+  .prog-chip.selected{ border-color: var(--blue); background: var(--blue-light); color: var(--blue); box-shadow: 0 0 0 3px rgba(67,97,238,0.15); }
+  .prog-chip.correct { border-color: var(--green); background: var(--green-light); color: var(--green); }
+  .prog-chip.wrong   { border-color: var(--red);   background: var(--red-light);  color: var(--red); }
+
+  .task-chip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px; border-radius: 10px; border: 2px solid var(--border);
+    background: var(--bg); font-weight: 700; cursor: pointer;
+    transition: all 0.15s; user-select: none; min-height: 46px;
+  }
+  .task-chip:hover   { border-color: var(--blue); background: var(--blue-light); }
+  .task-chip.selected{ border-color: var(--blue); background: var(--blue-light); }
+  .task-chip.correct { border-color: var(--green); background: var(--green-light); color: var(--green); font-weight: 800; }
+  .task-chip.wrong   { border-color: var(--red);   background: var(--red-light);  color: var(--red); }
+
+  #lineSvg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .trophy {
+    text-align: center; margin: 24px auto 0; max-width: 680px;
+    animation: fadeUp 0.5s 0.25s ease both;
+  }
+  .trophy-inner {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--card); border-radius: 99px;
+    padding: 14px 32px; box-shadow: var(--shadow);
+    font-weight: 800; font-size: 16px; color: var(--text);
+  }
+
+  @keyframes fadeUp   { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-12px); } to { opacity:1; transform:none; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">🕵️‍♂️ Geheime Mission</div>
+  <h1>IT-<span>MISSION</span></h1>
+  <p>👉 Willkommen in der IT-Abteilung — löst alle Aufgaben!</p>
+</div>
+
+<div class="card m1">
+  <div class="card-header">
+    <div class="mission-icon">🔐</div>
+    <div>
+      <div class="mission-label">Mission 1</div>
+      <h2>Das geheime Zeichen</h2>
+    </div>
+  </div>
+  <div class="card-body">Ohne dieses Zeichen funktioniert keine E-Mail!</div>
+  <div class="task-prompt">✍️ Finde das „at"-Symbol auf der Tastatur und schreibe es auf:</div>
+  <div class="input-row">
+    <span class="input-label">➡️ Antwort:</span>
+    <input class="field" id="m1input" maxlength="1" autocomplete="off" />
+    <button class="btn" onclick="checkM1()">Bestätigen</button>
+  </div>
+  <div class="feedback" id="m1fb"></div>
+</div>
+
+<div class="card m2">
+  <div class="card-header">
+    <div class="mission-icon">💻</div>
+    <div>
+      <div class="mission-label">Mission 2</div>
+      <h2>Der unsichtbare Trick</h2>
+    </div>
+  </div>
+  <div class="card-body">Du möchtest jemandem zeigen, was auf deinem Bildschirm ist – ohne alles abzutippen…</div>
+  <div class="task-prompt">👉 Welche Taste brauchst du dafür?</div>
+  <div class="options">
+    <div class="opt-label" id="opt_ALT"   onclick="toggleM2('ALT')">  <span class="opt-box"></span> ALT</div>
+    <div class="opt-label" id="opt_STRG"  onclick="toggleM2('STRG')"> <span class="opt-box"></span> STRG</div>
+    <div class="opt-label" id="opt_DRUCK" onclick="toggleM2('DRUCK')"><span class="opt-box"></span> DRUCK</div>
+  </div>
+  <button class="btn" onclick="checkM2()">Bestätigen</button>
+  <div class="feedback" id="m2fb"></div>
+</div>
+
+<div class="card m3">
+  <div class="card-header">
+    <div class="mission-icon">🧠</div>
+    <div>
+      <div class="mission-label">Mission 3</div>
+      <h2>IT-Detektive</h2>
+    </div>
+  </div>
+  <div class="card-body">Diese Programme werden in vielen Firmen benutzt.</div>
+  <div class="task-prompt">👉 Verbinde Programm mit Aufgabe — erst links klicken, dann rechts:</div>
+
+  <div class="connect-arena" id="connectArena">
+    <!-- Left col -->
+    <div>
+      <div class="connect-col-header">Programm</div>
+      <div class="connect-col" id="leftCol">
+        <div class="prog-chip" id="P_Outlook" onclick="selProg('Outlook')">📧 Outlook</div>
+        <div class="prog-chip" id="P_Word"    onclick="selProg('Word')">📄 Word</div>
+        <div class="prog-chip" id="P_SAP"     onclick="selProg('SAP')">🏢 SAP</div>
+      </div>
+    </div>
+
+    <!-- Middle gap (visual spacer) -->
+    <div class="connect-mid"></div>
+
+    <!-- SVG overlay on top of whole arena -->
+    <svg id="lineSvg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;"></svg>
+
+    <!-- Right col -->
+    <div>
+      <div class="connect-col-header">Aufgabe</div>
+      <div class="connect-col" id="rightCol">
+        <div class="task-chip" id="T_texte"  onclick="selTask('texte')">Texte schreiben</div>
+        <div class="task-chip" id="T_emails" onclick="selTask('emails')">E-Mails senden</div>
+        <div class="task-chip" id="T_firmen" onclick="selTask('firmen')">Firmen verwalten</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn" onclick="checkM3()">Bestätigen</button>
+  <div class="feedback" id="m3fb"></div>
+</div>
+
+<div class="card bonus">
+  <div class="card-header">
+    <div class="mission-icon">🎯</div>
+    <div>
+      <div class="mission-label">Bonus-Frage</div>
+      <h2>Passwort-Schutz</h2>
+    </div>
+  </div>
+  <div class="task-prompt">Warum sollte man ein Passwort <strong>niemals</strong> an andere weitergeben?</div>
+  <div class="input-row">
+    <span class="input-label">✍️</span>
+    <input class="field wide" id="bonusInput" autocomplete="off" />
+    <button class="btn yellow" onclick="checkBonus()">Bestätigen</button>
+  </div>
+  <div class="feedback" id="bonusfb"></div>
+</div>
+
+<div class="trophy">
+  <div class="trophy-inner">🏆 Geschafft — ihr seid echte IT-Profis!</div>
+</div>
+
+<script>
+// M1
+function checkM1() {
+  const inp = document.getElementById('m1input');
+  const fb  = document.getElementById('m1fb');
+  if (inp.value.trim() === '@') {
+    inp.className = 'field correct';
+    fb.innerHTML = '✅ Richtig!'; fb.className = 'feedback correct';
+  } else {
+    inp.className = 'field wrong';
+    fb.innerHTML = '❌ Nicht ganz – schau nochmal auf die Tastatur!'; fb.className = 'feedback wrong';
+  }
+}
+document.getElementById('m1input').addEventListener('keydown', e => { if (e.key==='Enter') checkM1(); });
+
+// M2
+const m2selected = new Set();
+function toggleM2(key) {
+  const fb = document.getElementById('m2fb');
+  fb.textContent = ''; fb.className = 'feedback';
+  const el = document.getElementById('opt_' + key);
+  if (m2selected.has(key)) {
+    m2selected.delete(key);
+    el.className = 'opt-label';
+  } else {
+    m2selected.add(key);
+    el.className = 'opt-label selected';
+  }
+}
+function checkM2() {
+  const fb = document.getElementById('m2fb');
+  if (m2selected.size === 0) {
+    fb.textContent = 'Bitte erst eine Taste auswählen.'; fb.className = 'feedback wrong'; return;
+  }
+  const correct = m2selected.size === 1 && m2selected.has('DRUCK');
+  ['ALT','STRG','DRUCK'].forEach(k => {
+    const el = document.getElementById('opt_' + k);
+    if (m2selected.has(k)) {
+      el.className = 'opt-label ' + (k === 'DRUCK' ? 'correct' : 'wrong');
+    } else {
+      el.className = 'opt-label';
+    }
+  });
+  if (correct) {
+    fb.innerHTML = '✅ Richtig! Die DRUCK-Taste (Print Screen) macht einen Screenshot.';
+    fb.className = 'feedback correct';
+  } else {
+    fb.innerHTML = '❌ Nicht ganz – nur eine Taste ist richtig. Versuch es nochmal!';
+    fb.className = 'feedback wrong';
+    setTimeout(() => {
+      m2selected.forEach(k => { document.getElementById('opt_' + k).className = 'opt-label'; });
+      m2selected.clear();
+      fb.textContent = ''; fb.className = 'feedback';
+    }, 1400);
+  }
+}
+
+// M3 – line connector
+const correct3 = { Outlook: 'emails', Word: 'texte', SAP: 'firmen' };
+let selProgName = null;
+let connections = {}; // prog -> task
+
+function getAnchor(el, side) {
+  const arena = document.getElementById('connectArena');
+  const arenaRect = arena.getBoundingClientRect();
+  const r = el.getBoundingClientRect();
+  const y = r.top - arenaRect.top + r.height / 2;
+  const x = side === 'right' ? r.right - arenaRect.left : r.left - arenaRect.left;
+  return { x, y };
+}
+
+function redrawLines() {
+  const svg = document.getElementById('lineSvg');
+  const arena = document.getElementById('connectArena');
+  svg.setAttribute('viewBox', `0 0 ${arena.offsetWidth} ${arena.offsetHeight}`);
+  svg.innerHTML = '';
+
+  for (const prog in connections) {
+    const task = connections[prog];
+    const progEl = document.getElementById('P_' + prog);
+    const taskEl = document.getElementById('T_' + task);
+    if (!progEl || !taskEl) continue;
+
+    const a = getAnchor(progEl, 'right');
+    const b = getAnchor(taskEl, 'left');
+
+    // Determine color based on state
+    let color = '#4361ee';
+    if (progEl.classList.contains('correct')) color = '#2d9e6b';
+    else if (progEl.classList.contains('wrong')) color = '#e0334c';
+
+    const cx = (a.x + b.x) / 2;
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M ${a.x} ${a.y} C ${cx} ${a.y}, ${cx} ${b.y}, ${b.x} ${b.y}`);
+    path.setAttribute('stroke', color);
+    path.setAttribute('stroke-width', '2.5');
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('opacity', '0.85');
+    svg.appendChild(path);
+
+    // Dot at both ends
+    [a, b].forEach(pt => {
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', pt.x); circle.setAttribute('cy', pt.y); circle.setAttribute('r', '4');
+      circle.setAttribute('fill', color);
+      svg.appendChild(circle);
+    });
+  }
+}
+
+function selProg(name) {
+  selProgName = name;
+  ['Outlook','Word','SAP'].forEach(p => {
+    document.getElementById('P_' + p).className = 'prog-chip' + (p === name ? ' selected' : '');
+  });
+  redrawLines();
+}
+
+function selTask(name) {
+  if (!selProgName) return;
+  // Remove any existing connection to this task
+  for (let k in connections) { if (connections[k] === name) delete connections[k]; }
+  connections[selProgName] = name;
+
+  // Reset task chip styles
+  ['texte','emails','firmen'].forEach(t => {
+    document.getElementById('T_' + t).className = 'task-chip';
+  });
+  // Mark connected tasks as selected
+  for (let k in connections) {
+    document.getElementById('T_' + connections[k]).className = 'task-chip selected';
+  }
+  document.getElementById('P_' + selProgName).className = 'prog-chip';
+  selProgName = null;
+  redrawLines();
+}
+
+function checkM3() {
+  const fb = document.getElementById('m3fb');
+  if (Object.keys(connections).length < 3) {
+    fb.textContent = '⚠️ Verbinde erst alle drei Programme!'; fb.className = 'feedback wrong'; return;
+  }
+  let allOk = true;
+  ['Outlook','Word','SAP'].forEach(p => {
+    const ok = connections[p] === correct3[p];
+    document.getElementById('P_' + p).className = 'prog-chip ' + (ok ? 'correct' : 'wrong');
+    if (connections[p]) document.getElementById('T_' + connections[p]).className = 'task-chip ' + (ok ? 'correct' : 'wrong');
+    if (!ok) allOk = false;
+  });
+  fb.innerHTML = allOk ? '✅ Alle richtig verbunden!' : '❌ Nicht alles stimmt – schau nochmal nach!';
+  fb.className = 'feedback ' + (allOk ? 'correct' : 'wrong');
+  redrawLines();
+}
+
+// Sync SVG size on resize
+window.addEventListener('resize', redrawLines);
+
+// Bonus
+const keywords = ['hack','gehackt','sicher','fremd','missbrauch','klauen','gestohlen','stehlen',
+  'dieb','zugriff','daten','schaden','betrug','lesen','identit','privat','geheim','schutz','konto','einloggen'];
+function lev(a,b){const m=a.length,n=b.length,d=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>j===0?i:0));for(let j=1;j<=n;j++)d[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=a[i-1]===b[j-1]?d[i-1][j-1]:1+Math.min(d[i-1][j-1],d[i-1][j],d[i][j-1]);return d[m][n];}
+function fuzzy(word,kw){const w=word.toLowerCase().replace(/ü/g,'ue').replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ß/g,'ss'),k=kw.toLowerCase();return w.includes(k)||k.includes(w)||(w.length>=5&&lev(w,k)<=2);}
+function checkBonus() {
+  const inp = document.getElementById('bonusInput');
+  const fb  = document.getElementById('bonusfb');
+  const words = inp.value.trim().split(/[\s,.!?;]+/);
+  if (words.join('').length < 3) {
+    inp.className='field wide wrong'; fb.textContent='⚠️ Bitte etwas eingeben.'; fb.className='feedback wrong'; return;
+  }
+  const hit = words.some(w => keywords.some(k => fuzzy(w, k)));
+  if (hit) {
+    inp.className='field wide correct'; fb.innerHTML='✅ Richtig!'; fb.className='feedback correct';
+  } else {
+    inp.className='field wide wrong';
+    fb.innerHTML='❌ Denk nochmal nach: Was könnte passieren, wenn jemand anderes dein Passwort kennt?';
+    fb.className='feedback wrong';
+  }
+}
+document.getElementById('bonusInput').addEventListener('keydown', e => { if(e.key==='Enter') checkBonus(); });
+</script>
+</body>
+</html>
